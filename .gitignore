@@ -28,5 +28,6 @@
 *.out
 *.app
 
-# Build directory
-tmp
+# Qt creator temp files
+*.user
+
