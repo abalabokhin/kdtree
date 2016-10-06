@@ -10,7 +10,7 @@ set(TEST_LIBRARIES
 # Define an executable and the libraries it depends on
 # This executable is not built by default, in order to get
 # The tests built and run use the custom target tests
-add_executable(t_kdtree EXCLUDE_FROM_ALL test_kdtree.cpp)
+add_executable(t_kdtree EXCLUDE_FROM_ALL test_kdtree.cpp test_kdpoint.cpp)
 target_link_libraries(t_kdtree ${TEST_LIBRARIES})
 
 # Define a test that uses the executable we just defined
