@@ -7,9 +7,9 @@
 #include <algorithm>
 
 template <typename T>
-class KDtree {
+class KDTree {
 public:
-    KDtree(std::vector<KDPoint<T>> const & aPoints, size_t aK, size_t aMaxNumberOfPointsInLeafNode = 1)
+    KDTree(std::vector<KDPoint<T>> const & aPoints, size_t aK, size_t aMaxNumberOfPointsInLeafNode = 1)
     /// We can swap vectors here, but the copy is done only ones when the tree is created.
     /// Do it if it is a bottle neck in tree creation.
         : K(aK),
@@ -24,7 +24,7 @@ public:
             indices[i] = i;
         }
 
-        root = buildTree(0, indices.size(), 0);
+        root.reset(buildTree(0, indices.size(), 0));
     }
 
 private:
@@ -51,17 +51,21 @@ private:
     {
         /// find a median
         /// sort indices in the range by having the corresponding points in acsending order
-        std::sort(indices.data() + leftPointsIndicesI, indices.data() + rightPointsIndicesI,
+
+        /// TODO: Use nth element here, it is faster
+        std::sort(indices.begin() + leftPointsIndicesI, indices.begin() + rightPointsIndicesI,
             [&](size_t a, size_t b) {
-                return points[indices[a]].at[coordinateI] <
-                    points[indices[b]].at[coordinateI];
+                auto coordinateA = points[indices[a]].at(coordinateI);
+                auto coordinateB = points[indices[b]].at(coordinateI);
+                return coordinateA < coordinateB;
             }
         );
 
         if ((rightPointsIndicesI - leftPointsIndicesI) % 2 == 1) {
-            return points[indices[(rightPointsIndicesI + leftPointsIndicesI) / 2]].at(coordinateI);
+            size_t middleI = (rightPointsIndicesI + leftPointsIndicesI) / 2;
+            return points.at(indices.at(middleI)).at(coordinateI);
         } else {
-            int biggerI = (rightPointsIndicesI + leftPointsIndicesI) / 2;
+            size_t biggerI = (rightPointsIndicesI + leftPointsIndicesI) / 2;
             auto m1 = points[indices[biggerI]].at(coordinateI);
             auto m2 = points[indices[biggerI - 1]].at(coordinateI);
             return (m1 + m2) / 2;
@@ -116,7 +120,7 @@ private:
                         splitingPlaneCoordinateI,
                         pivot);
 
-            IKDTreeNode<T> node = new KDTreeIntermediateNode<T>(splitingPlaneCoordinateI, pivot);
+            auto * node = new KDTreeIntermediateNode<T>(splitingPlaneCoordinateI, pivot);
             node->setLeftSubNode(buildTree(leftPointsIndicesI, middlePointsIndicesI, levelI + 1));
             node->setRightSubNode(buildTree(middlePointsIndicesI, rightPointsIndicesI, levelI + 1));
             return node;
@@ -127,6 +131,7 @@ private:
     size_t maxNumberOfPointsInLeafNode;
     /// TODO: probably have a dedicated class that hide the complexity of using indexis and points,
     /// it can store points and indexis together, and we can provide it with median finder )
+    /// other altrnative that we can swap points cheap
     std::vector<KDPoint<T>> points;
     std::vector<size_t> indices;
     std::unique_ptr<IKDTreeNode<T>> root;

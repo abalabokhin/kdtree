@@ -1,7 +1,7 @@
+#pragma once
+
 #include <stdexcept>
 #include <vector>
-
-#pragma once
 
 template <typename T>
 class KDPoint
@@ -10,7 +10,7 @@ public:
     KDPoint(const std::vector<T> &aCoordinates)
         : coordinates(aCoordinates)
     {}
-    T at(size_t i) {
+    T const & at(size_t i) const {
         return coordinates.at(i);
     }
 

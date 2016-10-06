@@ -1,5 +1,4 @@
-gi#ifndef KDTREENODE_H
-#define KDTREENODE_H
+#pragma once
 
 #include <memory>
 
@@ -8,7 +7,7 @@ template <typename T>
 class IKDTreeNode
 {
 public:
-    virtual ~IKDTreeNode();
+    virtual ~IKDTreeNode() {}
 };
 
 /// if node is a leaf
@@ -31,12 +30,12 @@ public:
         : planeCoordinateI(aPlaneCoordinateI), planeCoordinate(aPlaneCoordinate)
     {}
 
-    void SetLeftSubNode(IKDTreeNode<T> * node) {
-        leftSubNode = node;
+    void setLeftSubNode(IKDTreeNode<T> * node) {
+        leftSubNode.reset(node);
     }
 
-    void SetRightSubNode(IKDTreeNode<T> * node) {
-        rightSubNode = node;
+    void setRightSubNode(IKDTreeNode<T> * node) {
+        rightSubNode.reset(node);
     }
 
 private:
@@ -45,5 +44,3 @@ private:
     std::unique_ptr<IKDTreeNode<T>> leftSubNode;
     std::unique_ptr<IKDTreeNode<T>> rightSubNode;
 };
-
-#endif // KDTREENODE_H

@@ -1,4 +1,5 @@
 #include <kdpoint.hpp>
+#include <kdtree.hpp>
 
 #include <iostream>
 
@@ -10,6 +11,9 @@ int main(int argc, char** argv) {
 
     std::cout << one.squareDistanceToPoint(two);
 
+    std::vector<KDPoint<float>> points{one, two};
+
+    KDTree<float> tree(points, 2);
 
 }
 
