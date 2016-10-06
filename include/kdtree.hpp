@@ -2,9 +2,11 @@
 
 #include <kdtreenode.hpp>
 #include <kdpoint.hpp>
+
 #include <cstddef>
 #include <memory>
 #include <algorithm>
+#include <limits>
 
 template <typename T>
 class KDTree {
@@ -27,7 +29,57 @@ public:
         root.reset(buildTree(0, indices.size(), 0));
     }
 
+    size_t findClosestPoint(KDPoint<T> const & p) {
+        size_t closestPointI = findAClosePoint(p, root.get());
+        T minSquareDistance = points[closestPointI].squareDistanceToPoint(p);
+
+        std::vector<IKDTreeNode *> nodesToSearch;
+        nodesToSearch.push_back(root.get());
+
+        while(!nodesToSearch.empty()) {
+            auto node = nodesToSearch.back();
+            nodesToSearch.pop_back();
+            if (KDTreeLeafNode<T> * leaf = dynamic_cast<KDTreeLeafNode<T> *>(node)) {
+                leaf->findClosestPoint(
+                            points,
+                            indices,
+                            p,
+                            minSquareDistance,
+                            closestPointI
+                            );
+            } else {
+                KDTreeIntermediateNode<T> * intermediateNode =
+                        dynamic_cast<KDTreeIntermediateNode<T> *>(node);
+
+                intermediateNode->addNodesToSearch(nodesToSearch, p, minSquareDistance);
+            }
+        }
+        return closestPointI;
+    }
+
 private:
+    /// return index of a close point in the original point list
+    size_t findAClosePoint(KDPoint<T> const & p, IKDTreeNode * node) {
+        if (KDTreeLeafNode<T> * leaf = dynamic_cast<KDTreeLeafNode<T> *>(node)) {
+            size_t closestPointI = std::numeric_limits<size_t>::max();
+            T minSquareDistance = std::numeric_limits<T>::max();
+
+            leaf->findClosestPoint(points,
+                                   indices,
+                                   p,
+                                   minSquareDistance,
+                                   closestPointI
+                                   );
+
+            return closestPointI;
+        } else {
+            KDTreeIntermediateNode<T> * intermediateNode =
+                    dynamic_cast<KDTreeIntermediateNode<T> *>(node);
+
+            return findAClosePoint(p, intermediateNode->getCloserSubNode(p));
+        }
+    }
+
     size_t findSplittingPanelCoordinateI(
             size_t leftPointsIndicesI,
             size_t rightPointsIndicesI,
@@ -49,27 +101,22 @@ private:
             std::vector<size_t> & indices
             )
     {
-        /// find a median
-        /// sort indices in the range by having the corresponding points in acsending order
+        /// find a median, now we just find left median, other algorithms can be used to have
+        /// better ballanced tree, or find median faster.
+        size_t middlePointsIndicesI = (rightPointsIndicesI + leftPointsIndicesI) / 2;
 
-        /// TODO: Use nth element here, it is faster
-        std::sort(indices.begin() + leftPointsIndicesI, indices.begin() + rightPointsIndicesI,
-            [&](size_t a, size_t b) {
-                auto coordinateA = points[indices[a]].at(coordinateI);
-                auto coordinateB = points[indices[b]].at(coordinateI);
-                return coordinateA < coordinateB;
-            }
+        std::nth_element(
+                    indices.begin() + leftPointsIndicesI,
+                    indices.begin() + middlePointsIndicesI,
+                    indices.begin() + rightPointsIndicesI,
+                    [&](size_t i, size_t j) {
+                        auto elementI = points[i].at(coordinateI);
+                        auto elementJ = points[j].at(coordinateI);
+                        return elementI < elementJ;
+                    }
         );
 
-        if ((rightPointsIndicesI - leftPointsIndicesI) % 2 == 1) {
-            size_t middleI = (rightPointsIndicesI + leftPointsIndicesI) / 2;
-            return points.at(indices.at(middleI)).at(coordinateI);
-        } else {
-            size_t biggerI = (rightPointsIndicesI + leftPointsIndicesI) / 2;
-            auto m1 = points[indices[biggerI]].at(coordinateI);
-            auto m2 = points[indices[biggerI - 1]].at(coordinateI);
-            return (m1 + m2) / 2;
-        }
+        return points.at(indices.at(middlePointsIndicesI)).at(coordinateI);
     }
 
     size_t partition(
@@ -79,16 +126,21 @@ private:
             T pivot
             )
     {
-        /// TODO: parition indices here, now it is partitioned, cause the indices array
-        /// is sorted, so just find the first element from right subtree and return it
-        for (size_t i = leftPointsIndicesI; i < rightPointsIndicesI; ++i) {
-            if (points[indices[i]].at(coordinateI) > pivot) {
-                return i;
-            }
+        /// TODO: we can use iterators instead of indices
+        auto middleI = std::partition(indices.begin() + leftPointsIndicesI,
+                                      indices.begin() + rightPointsIndicesI,
+                                      [&](size_t i)
+        {
+            auto elementI = points[i].at(coordinateI);
+            bool temp = (elementI < pivot);
+            return temp;
         }
+        );
+
+        return middleI - indices.begin();
     }
 
-    IKDTreeNode<T> * buildTree(size_t leftPointsIndicesI, size_t rightPointsIndicesI, size_t levelI)
+    IKDTreeNode * buildTree(size_t leftPointsIndicesI, size_t rightPointsIndicesI, size_t levelI)
     {
         if (rightPointsIndicesI <= leftPointsIndicesI) {
             throw std::length_error("left index must always be bigger than the right one");
@@ -134,5 +186,5 @@ private:
     /// other altrnative that we can swap points cheap
     std::vector<KDPoint<T>> points;
     std::vector<size_t> indices;
-    std::unique_ptr<IKDTreeNode<T>> root;
+    std::unique_ptr<IKDTreeNode> root;
 };

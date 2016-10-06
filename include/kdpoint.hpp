@@ -14,7 +14,7 @@ public:
         return coordinates.at(i);
     }
 
-    T squareDistanceToPoint(KDPoint<T> const & other) {
+    T squareDistanceToPoint(KDPoint<T> const & other) const {
         /// If checking the size is a bottle_neck, use something instead, e.g. assert.
         if (coordinates.size() != other.coordinates.size()) {
             /// TODO: implement better info in the exception, e.g print points.
