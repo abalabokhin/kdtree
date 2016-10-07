@@ -1,7 +1,8 @@
 #pragma once
 
-#include <kdtreenode.hpp>
-#include <kdpoint.hpp>
+#include <kdtreeleafnode.hpp>
+#include <kdtreeintermediatenode.hpp>
+#include <kdpointstorage.hpp>
 
 #include <boost/serialization/unique_ptr.hpp>
 
@@ -112,6 +113,7 @@ private:
         }
     }
 
+    /// It is necessary to use boost serialization
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {
