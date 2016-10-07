@@ -113,6 +113,12 @@ private:
     std::unique_ptr<IKDTreeNode> rightSubNode;
 };
 
+/// If you need serialization for more template types, you have to register both nodes types with
+/// BOOST_CLASS_EXPORT(KDTreeIntermediateNode<MyType>)
+/// BOOST_CLASS_EXPORT(KDTreeLeafNode<MyType>)
+/// somewhere once
+/// where MyType is your type, e.g. int.
+
 BOOST_CLASS_EXPORT(KDTreeIntermediateNode<double>)
 BOOST_CLASS_EXPORT(KDTreeIntermediateNode<float>)
 BOOST_CLASS_EXPORT(KDTreeLeafNode<double>)
