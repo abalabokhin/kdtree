@@ -1,9 +1,9 @@
-#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
-#include "catch.hpp"
+//#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+//#include "catch.hpp"
 
-TEST_CASE( "KDTree class tests" ) {
-    KDPoint<int> one({1, 2});
-    KDPoint<int> two({1, 2});
+#include <boost/test/unit_test.hpp>
 
-    REQUIRE(0 == one.squareDistanceTo(two));
+BOOST_AUTO_TEST_CASE( my_test1 )
+{
+    BOOST_CHECK( 1 == 1);
 }

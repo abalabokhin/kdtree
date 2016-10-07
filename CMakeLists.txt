@@ -1,6 +1,5 @@
 # Specify the minimum CMAKE version required
 cmake_minimum_required(VERSION 3.1)
-
 set (CMAKE_CXX_STANDARD 11)
 
 # Your project's name

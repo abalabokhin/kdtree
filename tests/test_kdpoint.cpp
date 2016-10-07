@@ -1,9 +1,10 @@
-#include "catch.hpp"
+//#include "catch.hpp"
 #include "kdpoint.hpp"
 
-TEST_CASE( "KDPoint class tests" ) {
-    KDPoint<int> one({1, 2});
-    KDPoint<int> two({1, 2});
+#define BOOST_TEST_MODULE MyTest
+#include <boost/test/unit_test.hpp>
 
-    REQUIRE(0 == one.squareDistanceTo(two));
+BOOST_AUTO_TEST_CASE( my_test )
+{
+    BOOST_CHECK( 1 == 2);
 }
