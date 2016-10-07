@@ -3,6 +3,8 @@
 #include <kdtreenode.hpp>
 #include <kdpoint.hpp>
 
+#include <boost/serialization/unique_ptr.hpp>
+
 #include <cstddef>
 #include <memory>
 #include <algorithm>
@@ -11,6 +13,9 @@
 template <typename T>
 class KDTree {
 public:
+    /// empty c-tor for serialization.
+    KDTree() {}
+
     KDTree(std::vector<KDPoint<T>> const & aPoints, size_t aK, size_t aMaxNumberOfPointsInLeafNode = 1)
     /// We can swap vectors here, but the copy is done only ones when the tree is created.
     /// Do it if it is a bottle neck in tree creation.
@@ -179,8 +184,14 @@ private:
         }
     }
 
-    size_t K;
-    size_t maxNumberOfPointsInLeafNode;
+    friend class boost::serialization::access;
+    template <typename Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+        ar & K & maxNumberOfPointsInLeafNode & points & indices & root;
+    }
+
+    size_t K = 0;
+    size_t maxNumberOfPointsInLeafNode = 0;
     /// TODO: probably have a dedicated class that hide the complexity of using indexis and points,
     /// it can store points and indexis together, and we can provide it with median finder )
     /// other altrnative that we can swap points cheap

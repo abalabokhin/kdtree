@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/serialization/vector.hpp>
+
 #include <stdexcept>
 #include <vector>
 
@@ -7,6 +9,9 @@ template <typename T>
 class KDPoint
 {
 public:
+    /// Empty c-tor for serialization
+    KDPoint() {}
+
     KDPoint(const std::vector<T> &aCoordinates)
         : coordinates(aCoordinates)
     {}
@@ -28,5 +33,11 @@ public:
         return distance;
     }
 private:
+    friend class boost::serialization::access;
+    template <typename Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+        ar & coordinates;
+    }
+
     std::vector<T> coordinates;
 };

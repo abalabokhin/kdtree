@@ -1,7 +1,7 @@
 #pragma once
 
 #include <kdpoint.hpp>
-
+#include <boost/serialization/export.hpp>
 #include <memory>
 
 /// Interface for KDTReeNode
@@ -9,6 +9,12 @@ class IKDTreeNode
 {
 public:
     virtual ~IKDTreeNode() {}
+
+private:
+    friend class boost::serialization::access;
+    template <typename Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+    }
 };
 
 /// if node is a leaf
@@ -16,6 +22,8 @@ template <typename T>
 class KDTreeLeafNode : public IKDTreeNode
 {
 public:
+    KDTreeLeafNode() {}
+
     KDTreeLeafNode(size_t aLeftPointsIndecisI, size_t aRightPointsIndecisI)
         : leftPointsIndecisI(aLeftPointsIndecisI), rightPointsIndecisI(aRightPointsIndecisI)
     {}
@@ -38,6 +46,12 @@ public:
     }
 
 private:
+    friend class boost::serialization::access;
+    template <typename Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+        ar & leftPointsIndecisI & rightPointsIndecisI;
+    }
+
     size_t leftPointsIndecisI;
     size_t rightPointsIndecisI;
 };
@@ -47,6 +61,8 @@ template <typename T>
 class KDTreeIntermediateNode : public IKDTreeNode
 {
 public:
+    KDTreeIntermediateNode() {}
+
     KDTreeIntermediateNode(size_t aPlaneCoordinateI, T aPlaneCoordinate)
         : planeCoordinateI(aPlaneCoordinateI), planeCoordinate(aPlaneCoordinate)
     {}
@@ -81,8 +97,20 @@ public:
     }
 
 private:
+    friend class boost::serialization::access;
+    template <typename Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+        ar & planeCoordinateI & planeCoordinate & leftSubNode & rightSubNode;
+    }
+
     size_t planeCoordinateI = 0;
     T planeCoordinate;
     std::unique_ptr<IKDTreeNode> leftSubNode;
     std::unique_ptr<IKDTreeNode> rightSubNode;
 };
+
+//BOOST_CLASS_EXPORT_IMPLEMENT(KDTreeLeafNode<float>)
+//BOOST_CLASS_EXPORT_IMPLEMENT(KDTreeLeafNode<double>)
+//BOOST_CLASS_EXPORT_IMPLEMENT(KDTreeIntermediateNode<float>)
+//BOOST_CLASS_EXPORT_IMPLEMENT(KDTreeIntermediateNode<double>)
+//BOOST_SERIALIZATION_ASSUME_ABSTRACT(IKDTreeNode)
