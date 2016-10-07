@@ -18,7 +18,6 @@ private:
 };
 
 /// if node is a leaf
-template <typename T>
 class KDTreeLeafNode : public IKDTreeNode
 {
 public:
@@ -28,28 +27,14 @@ public:
         : leftPointsIndecisI(aLeftPointsIndecisI), rightPointsIndecisI(aRightPointsIndecisI)
     {}
 
-    void findClosestPoint(
-            std::vector<KDPoint<T>> const & points,
-            std::vector<size_t> const & indices,
-            KDPoint<T> const & p,
-            T & minSquareDistance,
-            size_t & bestI
-        ) const
-    {
-        for (size_t i = leftPointsIndecisI; i < rightPointsIndecisI; ++i) {
-            auto squareDistanceCandidate = points.at(indices[i]).squareDistanceToPoint(p);
-            if (squareDistanceCandidate < minSquareDistance) {
-                minSquareDistance = squareDistanceCandidate;
-                bestI = indices[i];
-            }
-        }
-    }
+    size_t getLeftI() { return leftPointsIndecisI; }
+    size_t getRightI() { return rightPointsIndecisI; }
 
 private:
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {
-        boost::serialization::void_cast_register<KDTreeLeafNode<T>, IKDTreeNode>();
+        boost::serialization::void_cast_register<KDTreeLeafNode, IKDTreeNode>();
         boost::serialization::base_object<IKDTreeNode>(*this);
         ar & leftPointsIndecisI & rightPointsIndecisI;
     }
@@ -113,14 +98,13 @@ private:
     std::unique_ptr<IKDTreeNode> rightSubNode;
 };
 
-/// If you need serialization for more template types, you have to register both nodes types with
+/// If you need serialization for more template types, you have to register KDTreeIntermediateNode
+/// types with
 /// BOOST_CLASS_EXPORT(KDTreeIntermediateNode<MyType>)
-/// BOOST_CLASS_EXPORT(KDTreeLeafNode<MyType>)
 /// somewhere once
 /// where MyType is your type, e.g. int.
 
 BOOST_CLASS_EXPORT(KDTreeIntermediateNode<double>)
 BOOST_CLASS_EXPORT(KDTreeIntermediateNode<float>)
-BOOST_CLASS_EXPORT(KDTreeLeafNode<double>)
-BOOST_CLASS_EXPORT(KDTreeLeafNode<float>)
+BOOST_CLASS_EXPORT(KDTreeLeafNode)
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(IKDTreeNode)

@@ -16,27 +16,17 @@ public:
     /// empty c-tor for serialization.
     KDTree() {}
 
-    KDTree(std::vector<KDPoint<T>> const & aPoints, size_t aK, size_t aMaxNumberOfPointsInLeafNode = 1)
-    /// We can swap vectors here, but the copy is done only ones when the tree is created.
-    /// Do it if it is a bottle neck in tree creation.
-        : K(aK),
-          maxNumberOfPointsInLeafNode(aMaxNumberOfPointsInLeafNode),
-          points(aPoints),
-          indices(points.size())
+    KDTree(KDPointStorage<T> * aStorage, size_t aMaxNumberOfPointsInLeafNode = 1)
+        : maxNumberOfPointsInLeafNode(aMaxNumberOfPointsInLeafNode)
     {
-        /// create list of indices, all the manipulation with points (sorting, partitioning, etc)
-        /// is supposed to be performed with indices instead, because it is faster than manipuating
-        /// with points directly
-        for (int i = 0; i < indices.size(); ++i) {
-            indices[i] = i;
-        }
-
-        root.reset(buildTree(0, indices.size(), 0));
+        storage.reset(aStorage);
+        root.reset(buildTree(0, storage->size(), 0));
     }
 
     size_t findClosestPoint(KDPoint<T> const & p) {
-        size_t closestPointI = findAClosePoint(p, root.get());
-        T minSquareDistance = points[closestPointI].squareDistanceToPoint(p);
+        size_t closestPointOriginalI = findAClosePoint(p, root.get());
+        T minSquareDistance = storage.getPointByOriginalI(closestPointOriginalI).
+                squareDistanceToPoint(p);
 
         std::vector<IKDTreeNode *> nodesToSearch;
         nodesToSearch.push_back(root.get());
@@ -44,13 +34,13 @@ public:
         while(!nodesToSearch.empty()) {
             auto node = nodesToSearch.back();
             nodesToSearch.pop_back();
-            if (KDTreeLeafNode<T> * leaf = dynamic_cast<KDTreeLeafNode<T> *>(node)) {
-                leaf->findClosestPoint(
-                            points,
-                            indices,
+            if (KDTreeLeafNode * leaf = dynamic_cast<KDTreeLeafNode *>(node)) {
+                storage->findClosestPoint(
                             p,
                             minSquareDistance,
-                            closestPointI
+                            closestPointOriginalI,
+                            leaf->getLeftI(),
+                            leaf->getRightI()
                             );
             } else {
                 KDTreeIntermediateNode<T> * intermediateNode =
@@ -59,22 +49,23 @@ public:
                 intermediateNode->addNodesToSearch(nodesToSearch, p, minSquareDistance);
             }
         }
-        return closestPointI;
+        return closestPointOriginalI;
     }
 
 private:
     /// return index of a close point in the original point list
     size_t findAClosePoint(KDPoint<T> const & p, IKDTreeNode * node) {
-        if (KDTreeLeafNode<T> * leaf = dynamic_cast<KDTreeLeafNode<T> *>(node)) {
+        if (KDTreeLeafNode * leaf = dynamic_cast<KDTreeLeafNode *>(node)) {
             size_t closestPointI = std::numeric_limits<size_t>::max();
             T minSquareDistance = std::numeric_limits<T>::max();
 
-            leaf->findClosestPoint(points,
-                                   indices,
-                                   p,
-                                   minSquareDistance,
-                                   closestPointI
-                                   );
+            storage->findClosestPoint(
+                        p,
+                        minSquareDistance,
+                        closestPointI,
+                        leaf->getLeftI(),
+                        leaf->getRightI()
+                        );
 
             return closestPointI;
         } else {
@@ -85,66 +76,6 @@ private:
         }
     }
 
-    size_t findSplittingPanelCoordinateI(
-            size_t leftPointsIndicesI,
-            size_t rightPointsIndicesI,
-            size_t levelI,
-            std::vector<KDPoint<T>> const & points,
-            std::vector<size_t> const & indices
-            )
-    {
-        return levelI % K;
-    }
-
-    /// this functions should not do anyhting with the indecies outside of the (leftPointsIndecisI,
-    /// rightPointsIndecisI) range
-    T findPivot(
-            size_t leftPointsIndicesI,
-            size_t rightPointsIndicesI,
-            size_t coordinateI,
-            std::vector<KDPoint<T>> const & points,
-            std::vector<size_t> & indices
-            )
-    {
-        /// find a median, now we just find left median, other algorithms can be used to have
-        /// better ballanced tree, or find median faster.
-        size_t middlePointsIndicesI = (rightPointsIndicesI + leftPointsIndicesI) / 2;
-
-        std::nth_element(
-                    indices.begin() + leftPointsIndicesI,
-                    indices.begin() + middlePointsIndicesI,
-                    indices.begin() + rightPointsIndicesI,
-                    [&](size_t i, size_t j) {
-                        auto elementI = points[i].at(coordinateI);
-                        auto elementJ = points[j].at(coordinateI);
-                        return elementI < elementJ;
-                    }
-        );
-
-        return points.at(indices.at(middlePointsIndicesI)).at(coordinateI);
-    }
-
-    size_t partition(
-            size_t leftPointsIndicesI,
-            size_t rightPointsIndicesI,
-            size_t coordinateI,
-            T pivot
-            )
-    {
-        /// TODO: we can use iterators instead of indices
-        auto middleI = std::partition(indices.begin() + leftPointsIndicesI,
-                                      indices.begin() + rightPointsIndicesI,
-                                      [&](size_t i)
-        {
-            auto elementI = points[i].at(coordinateI);
-            bool temp = (elementI < pivot);
-            return temp;
-        }
-        );
-
-        return middleI - indices.begin();
-    }
-
     IKDTreeNode * buildTree(size_t leftPointsIndicesI, size_t rightPointsIndicesI, size_t levelI)
     {
         if (rightPointsIndicesI <= leftPointsIndicesI) {
@@ -152,26 +83,23 @@ private:
         }
         if (rightPointsIndicesI - leftPointsIndicesI <= maxNumberOfPointsInLeafNode) {
             /// create a leaf node here
-            new KDTreeLeafNode<T>(leftPointsIndicesI, rightPointsIndicesI);
+            new KDTreeLeafNode(leftPointsIndicesI, rightPointsIndicesI);
         } else {
             /// create an intermediate node here
             /// find a coordinateI to build a plane
-            size_t splitingPlaneCoordinateI = findSplittingPanelCoordinateI(
+            size_t splitingPlaneCoordinateI = storage->findSplittingPanelCoordinateI(
                         leftPointsIndicesI,
                         rightPointsIndicesI,
-                        levelI,
-                        points,
-                        indices
+                        levelI
                         );
             /// find a pivot, an create two subtrees
-            auto pivot = findPivot(
+            auto pivot = storage->findPivot(
                         leftPointsIndicesI,
-                       rightPointsIndicesI,
-                       splitingPlaneCoordinateI,
-                       points,
-                       indices);
+                        rightPointsIndicesI,
+                        splitingPlaneCoordinateI
+                        );
 
-            auto middlePointsIndicesI = partition(
+            auto middlePointsIndicesI = storage->partition(
                         leftPointsIndicesI,
                         rightPointsIndicesI,
                         splitingPlaneCoordinateI,
@@ -187,15 +115,10 @@ private:
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {
-        ar & K & maxNumberOfPointsInLeafNode & points & indices & root;
+        ar & maxNumberOfPointsInLeafNode & storage & root;
     }
 
-    size_t K = 0;
-    size_t maxNumberOfPointsInLeafNode = 0;
-    /// TODO: probably have a dedicated class that hide the complexity of using indexis and points,
-    /// it can store points and indexis together, and we can provide it with median finder )
-    /// other altrnative that we can swap points cheap
-    std::vector<KDPoint<T>> points;
-    std::vector<size_t> indices;
+    size_t maxNumberOfPointsInLeafNode = 1;
+    std::unique_ptr<KDPointStorage<T>> storage;
     std::unique_ptr<IKDTreeNode> root;
 };

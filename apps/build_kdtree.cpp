@@ -26,7 +26,8 @@ int main(int argc, char** argv) {
     /// test something
     std::stringstream ss;
     boost::archive::text_oarchive oa{ss};
-    KDTree<float> tree(points, 2);
+    auto storage = new KDPointStorage<float>(points, 2);
+    KDTree<float> tree(storage);
     oa << tree;
 
     KDTree<float> tree1;

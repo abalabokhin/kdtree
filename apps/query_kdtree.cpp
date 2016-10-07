@@ -26,12 +26,12 @@ int main(int argc, char** argv) {
     /// test something
     std::stringstream ss;
     boost::archive::text_oarchive oa{ss};
-    KDTree<float> tree(points, 2);
-    oa << tree;
+    //KDTree<float> tree(points, 2);
+    //oa << tree;
 
-    KDTree<float> tree1;
-    boost::archive::text_iarchive ia{ss};
-    ia >> tree1;
+//    KDTree<float> tree1;
+//    boost::archive::text_iarchive ia{ss};
+//    ia >> tree1;
 
     ///
     int fgh = 78;
