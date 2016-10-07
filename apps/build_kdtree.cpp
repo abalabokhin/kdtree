@@ -36,5 +36,4 @@ int main(int argc, char** argv) {
     ///
     int fgh = 78;
     ++fgh;
-
 }
