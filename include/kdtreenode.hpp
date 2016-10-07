@@ -49,6 +49,8 @@ private:
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {
+        boost::serialization::void_cast_register<KDTreeLeafNode<T>, IKDTreeNode>();
+        boost::serialization::base_object<IKDTreeNode>(*this);
         ar & leftPointsIndecisI & rightPointsIndecisI;
     }
 
@@ -100,6 +102,8 @@ private:
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {
+        boost::serialization::void_cast_register<KDTreeIntermediateNode<T>, IKDTreeNode>();
+        boost::serialization::base_object<IKDTreeNode>(*this);
         ar & planeCoordinateI & planeCoordinate & leftSubNode & rightSubNode;
     }
 

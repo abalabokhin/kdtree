@@ -7,6 +7,13 @@
 #include <sstream>
 #include <iostream>
 
+BOOST_CLASS_EXPORT_GUID(KDTreeIntermediateNode<double>, "derived_1")
+BOOST_CLASS_EXPORT_GUID(KDTreeIntermediateNode<float>, "derived_2")
+BOOST_CLASS_EXPORT_GUID(KDTreeLeafNode<double>, "derived_3")
+BOOST_CLASS_EXPORT_GUID(KDTreeLeafNode<float>, "derived_4")
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(IKDTreeNode)
+
+
 int main(int argc, char** argv) {
 //    boost::serialization::void_cast_register<KDTreeIntermediateNode<double>, IKDTreeNode>();
 //    boost::serialization::void_cast_register<KDTreeIntermediateNode<float>, IKDTreeNode>();
@@ -34,7 +41,7 @@ int main(int argc, char** argv) {
     KDTree<float> tree(points, 2);
     oa << tree;
 
-    KDTree<float> tree1(points, 2);
+    KDTree<float> tree1;
     boost::archive::text_iarchive ia{ss};
     ia >> tree1;
 
