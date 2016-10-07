@@ -113,8 +113,8 @@ private:
     std::unique_ptr<IKDTreeNode> rightSubNode;
 };
 
-//BOOST_CLASS_EXPORT_IMPLEMENT(KDTreeLeafNode<float>)
-//BOOST_CLASS_EXPORT_IMPLEMENT(KDTreeLeafNode<double>)
-//BOOST_CLASS_EXPORT_IMPLEMENT(KDTreeIntermediateNode<float>)
-//BOOST_CLASS_EXPORT_IMPLEMENT(KDTreeIntermediateNode<double>)
-//BOOST_SERIALIZATION_ASSUME_ABSTRACT(IKDTreeNode)
+BOOST_CLASS_EXPORT(KDTreeIntermediateNode<double>)
+BOOST_CLASS_EXPORT(KDTreeIntermediateNode<float>)
+BOOST_CLASS_EXPORT(KDTreeLeafNode<double>)
+BOOST_CLASS_EXPORT(KDTreeLeafNode<float>)
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(IKDTreeNode)
