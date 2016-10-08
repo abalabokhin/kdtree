@@ -2,14 +2,18 @@
 
 #include <boost/test/unit_test.hpp>
 
-BOOST_AUTO_TEST_CASE( KDPointTest_differentPointsDimentions )
+BOOST_AUTO_TEST_CASE( KDPointStorageTest_differentPointsDimentions )
 {
+    BOOST_CHECK_EXCEPTION(
+                KDPointStorage<float>({}, 2),
+                std::domain_error, [](std::domain_error const &){return true;});
+
     BOOST_CHECK_EXCEPTION(
                 KDPointStorage<float>({KDPoint<float>({1, 2}), KDPoint<float>({1, 2, 3})}, 2),
                 std::domain_error, [](std::domain_error const &){return true;});
 }
 
-BOOST_AUTO_TEST_CASE( KDPointTest_findPivotAndPartitionAndClosestPointSearch )
+BOOST_AUTO_TEST_CASE( KDPointStorageTest_findPivotAndPartitionAndClosestPointSearch )
 {
     KDPointStorage<float> storage({KDPoint<float>({1, -1}),
                            KDPoint<float>({5, 3}),

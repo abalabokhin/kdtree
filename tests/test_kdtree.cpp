@@ -1,6 +1,11 @@
 #include <boost/test/unit_test.hpp>
 
-BOOST_AUTO_TEST_CASE( my_test1 )
+BOOST_AUTO_TEST_CASE( KDTreeTest_saveLoadSimpleTest )
 {
-    BOOST_CHECK( 1 == 1);
+    /// test for random 100 points for dims for dims 3 to 5
+
+
+
+
+
 }

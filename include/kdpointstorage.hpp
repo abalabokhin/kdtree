@@ -14,12 +14,15 @@ public:
     KDPointStorage() {}
     virtual ~KDPointStorage() {}
 
+    /// All the operations are performed with indices instead of the points directly,
+    /// because it is faster and we need the index in the original array any way.
+    /// Other implementations can be used instead.
     KDPointStorage(std::vector<KDPoint<T>> const & aPoints, size_t aK)
         : K(aK), points(aPoints), indices(points.size())
     {
-        /// All the operations are performed with indices instead of the points directly,
-        /// because it is faster and we need the index in the original array any way.
-        /// Other implementations can be used instead.
+        if (points.size() == 0)
+            throw std::domain_error("point storage must have at least one point");
+
         for (int i = 0; i < points.size(); ++i) {
             if (points.at(i).size() != K)
                 throw std::domain_error("point storage has different dimesion than some points");

@@ -28,7 +28,10 @@ int main(int argc, char** argv) {
     boost::archive::text_oarchive oa{ss};
     auto storage = new KDPointStorage<float>(points, 2);
     KDTree<float> tree(storage);
+    size_t i = 0;
+    tree.findClosestPoint(KDPoint<float>({1.2, 3.4}), i);
     oa << tree;
+
 
     KDTree<float> tree1;
     boost::archive::text_iarchive ia{ss};

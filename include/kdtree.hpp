@@ -24,9 +24,9 @@ public:
         root.reset(buildTree(0, storage->size(), 0));
     }
 
-    size_t findClosestPoint(KDPoint<T> const & p) {
-        size_t closestPointOriginalI = findAClosePoint(p, root.get());
-        T minSquareDistance = storage.getPointByOriginalI(closestPointOriginalI).
+    KDPoint<T> const & findClosestPoint(KDPoint<T> const & p, size_t & closestPointOriginalI) {
+        closestPointOriginalI = findAClosePoint(p, root.get());
+        T minSquareDistance = storage->getPointByOriginalI(closestPointOriginalI).
                 squareDistanceToPoint(p);
 
         std::vector<IKDTreeNode *> nodesToSearch;
@@ -50,7 +50,7 @@ public:
                 intermediateNode->addNodesToSearch(nodesToSearch, p, minSquareDistance);
             }
         }
-        return closestPointOriginalI;
+        return storage->getPointByOriginalI(closestPointOriginalI);
     }
 
 private:
