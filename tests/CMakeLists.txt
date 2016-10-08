@@ -1,11 +1,4 @@
-# Necessary for the custom command tests
-include(CTest)
-
-# Assign all the libraries necessary to compile the test
-# to the variable TEST_LIBRARIES
-#set(TEST_LIBRARIES
-#  kdtreelib
-#  )
+#include(CTest)
 
 find_package( Boost REQUIRED COMPONENTS serialization unit_test_framework)
 include_directories( ${Boost_INCLUDE_DIRS} )
@@ -13,7 +6,12 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 # Define an executable and the libraries it depends on
 # This executable is not built by default, in order to get
 # The tests built and run use the custom target tests
-add_executable(t_kdtree test_kdtree.cpp test_kdpoint.cpp)
+add_executable(t_kdtree
+    test_kdtree.cpp
+    test_kdpoint.cpp
+    test_kdpointstorage.cpp
+    test_kdtreeintermediatenode.cpp
+    )
 
 add_definitions( -DBOOST_TEST_DYN_LINK )
 

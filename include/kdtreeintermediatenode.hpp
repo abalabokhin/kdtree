@@ -53,7 +53,7 @@ private:
     }
 
     size_t planeCoordinateI = 0;
-    T planeCoordinate;
+    T planeCoordinate = 0;
     std::unique_ptr<IKDTreeNode> leftSubNode;
     std::unique_ptr<IKDTreeNode> rightSubNode;
 };

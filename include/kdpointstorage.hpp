@@ -1,9 +1,13 @@
 #pragma once
 
-/// In this class we abtract the point storage. All the manipulation with points are performed
+#include<kdpoint.hpp>
+
+#include <exception>
+
+/// In this class we inclapsulate the point storage. All the manipulation with points are performed
 /// here, like partition, selecting pivot, selecting coordinate to split, etc.
 /// findPivot and findSplittingPanelCoordinateI can be overrided to use other algorithms to
-/// perform this operations.
+/// perform these operations.
 template <typename T>
 class KDPointStorage {
 public:
@@ -13,12 +17,13 @@ public:
     KDPointStorage(std::vector<KDPoint<T>> const & aPoints, size_t aK)
         : K(aK), points(aPoints), indices(points.size())
     {
-        /// create list of indices, all the manipulation with points (sorting, partitioning, etc)
-        /// is supposed to be performed with indices instead, because it is faster than manipuating
-        /// with points directly
+        /// All the operations are performed with indices instead of the points directly,
+        /// because it is faster and we need the index in the original array any way.
+        /// Other implementations can be used instead.
+        for (int i = 0; i < points.size(); ++i) {
+            if (points.at(i).size() != K)
+                throw std::domain_error("point storage has different dimesion than some points");
 
-        /// TODO: check that all the points has the right dimention and K > 0
-        for (int i = 0; i < indices.size(); ++i) {
             indices[i] = i;
         }
     }
@@ -38,7 +43,7 @@ public:
             size_t coordinateI
             )
     {
-        /// find a median, now we just find left median, other algorithms can be used to have
+        /// find a median, now we just find right median, other algorithms can be used to have
         /// better ballanced tree, or find median faster. E.g median of some random
         /// points can be used
 

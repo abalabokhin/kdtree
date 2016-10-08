@@ -16,6 +16,13 @@ public:
     KDPoint(const std::vector<T> &aCoordinates)
         : coordinates(aCoordinates)
     {}
+
+    /// Get the dimention of the point
+    size_t size() const {
+        return coordinates.size();
+    }
+
+    /// Get coordiante value at ith coordinate
     T const & at(size_t i) const {
         return coordinates.at(i);
     }
@@ -23,7 +30,7 @@ public:
     T squareDistanceToPoint(KDPoint<T> const & other) const {
         /// If checking the size is a bottle_neck, use something instead, e.g. assert.
         if (coordinates.size() != other.coordinates.size()) {
-            throw std::length_error("Size of points are not the same");
+            throw std::length_error("size of points are not the same");
         }
         T distance{0};
         for (size_t i = 0; i < coordinates.size(); ++i) {
@@ -33,7 +40,7 @@ public:
         return distance;
     }
 private:
-    /// It is necessary to use boost serialization
+    /// Boost serialization
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {
