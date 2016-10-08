@@ -58,11 +58,10 @@ private:
     std::unique_ptr<IKDTreeNode> rightSubNode;
 };
 
-/// If you need serialization for more template types, you have to register KDTreeIntermediateNode
-/// types with
-/// BOOST_CLASS_EXPORT(KDTreeIntermediateNode<MyType>)
-/// somewhere once
-/// where MyType is your type, e.g. int.
+/// If you need serialization for KDTreeIntermediateNode<T> make sure that you registered the class
+/// before using serialization in cpp once. E.g:
+/// BOOST_CLASS_EXPORT(KDTreeIntermediateNode<float>)
+/// BOOST_CLASS_EXPORT(KDTreeIntermediateNode<double>)
 
-BOOST_CLASS_EXPORT(KDTreeIntermediateNode<double>)
-BOOST_CLASS_EXPORT(KDTreeIntermediateNode<float>)
+
+

@@ -22,6 +22,18 @@ public:
         return coordinates.size();
     }
 
+    /// Get the dimention of the point
+    bool operator == (KDPoint<T> const & right) const {
+        if (coordinates.size() != right.coordinates.size()) {
+            throw std::length_error("size of points are not the same");
+        }
+        for (size_t i = 0; i < coordinates.size(); ++i) {
+            if (coordinates[i] != right.coordinates[i])
+                return false;
+        }
+        return true;
+    }
+
     /// Get coordiante value at ith coordinate
     T const & at(size_t i) const {
         return coordinates.at(i);

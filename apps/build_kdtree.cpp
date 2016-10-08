@@ -7,6 +7,9 @@
 #include <sstream>
 #include <iostream>
 
+BOOST_CLASS_EXPORT(KDTreeIntermediateNode<float>)
+BOOST_CLASS_EXPORT(KDTreeIntermediateNode<double>)
+
 int main(int argc, char** argv) {
     std::cout << "Hellow World!" << std::endl;
 
