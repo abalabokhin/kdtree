@@ -33,7 +33,7 @@ size_t findClosestPoint(
     return bestI;
 }
 
-BOOST_AUTO_TEST_CASE( KDTreeTest_saveLoadSimpleTest )
+BOOST_AUTO_TEST_CASE( KDTreeTest_randomGeneratedTreesTest )
 {
     /// test for random 100 points for dims for dims 1 to 5
     /// than test 1000 point to search

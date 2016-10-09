@@ -84,16 +84,17 @@ private:
         }
         if (rightPointsIndicesI - leftPointsIndicesI <= maxNumberOfPointsInLeafNode) {
             /// create a leaf node here
-            new KDTreeLeafNode(leftPointsIndicesI, rightPointsIndicesI);
+            return new KDTreeLeafNode(leftPointsIndicesI, rightPointsIndicesI);
         } else {
             /// create an intermediate node here
-            /// find a coordinateI to build a plane
+            /// find a coordinateI to build a splitting plane
             size_t splitingPlaneCoordinateI = storage->findSplittingPanelCoordinateI(
                         leftPointsIndicesI,
                         rightPointsIndicesI,
                         levelI
                         );
-            /// find a pivot, an create two subtrees
+
+            /// find a pivot, and create two subtrees
             auto pivot = storage->findPivot(
                         leftPointsIndicesI,
                         rightPointsIndicesI,
@@ -105,6 +106,12 @@ private:
                         rightPointsIndicesI,
                         splitingPlaneCoordinateI,
                         pivot);
+
+            if (middlePointsIndicesI <= leftPointsIndicesI ||
+                    middlePointsIndicesI >= rightPointsIndicesI) {
+                throw std::length_error("middle point index must be betwee left and "
+                                        "right point indecis");
+            }
 
             auto * node = new KDTreeIntermediateNode<T>(splitingPlaneCoordinateI, pivot);
             node->setLeftSubNode(buildTree(leftPointsIndicesI, middlePointsIndicesI, levelI + 1));
