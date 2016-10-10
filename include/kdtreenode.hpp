@@ -3,7 +3,7 @@
 #include <kdpoint.hpp>
 #include <memory>
 
-/// Interface for KDTReeNode
+/// Interface for KDTReeNode. It has two children right now: leaf node and intermediate node.
 class IKDTreeNode
 {
 public:

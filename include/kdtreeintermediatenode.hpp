@@ -7,12 +7,14 @@ template <typename T>
 class KDTreeIntermediateNode : public IKDTreeNode
 {
 public:
+    /// Empty c-tor for serialization
     KDTreeIntermediateNode() {}
 
     KDTreeIntermediateNode(size_t aPlaneCoordinateI, T aPlaneCoordinate)
         : planeCoordinateI(aPlaneCoordinateI), planeCoordinate(aPlaneCoordinate)
     {}
 
+    /// find the node in subnodes that has the provided point
     IKDTreeNode * getCloserSubNode(KDPoint<T> const & p) {
         if (p.at(planeCoordinateI) < planeCoordinate) {
             return leftSubNode.get();
@@ -21,6 +23,8 @@ public:
         }
     }
 
+    /// check the distance from the point to the boiundary of the subnodes
+    /// and add either both nodes or only one to search further
     void addNodesToSearch(std::vector<IKDTreeNode *> & nodesToSearch,
                           KDPoint<T> const & p,
                           T minSquareDistance)
@@ -43,7 +47,7 @@ public:
     }
 
 private:
-    /// It is necessary to use boost serialization
+    /// Boost serialization
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {
@@ -59,7 +63,7 @@ private:
 };
 
 /// If you need serialization for KDTreeIntermediateNode<T> make sure that you registered the class
-/// before using serialization in cpp once. E.g:
+/// before using serialization in cpp. E.g:
 /// BOOST_CLASS_EXPORT(KDTreeIntermediateNode<float>)
 /// BOOST_CLASS_EXPORT(KDTreeIntermediateNode<double>)
 

@@ -11,7 +11,9 @@
 template <typename T>
 class KDPointStorage {
 public:
+    /// Empty c-tor for serialization
     KDPointStorage() {}
+
     virtual ~KDPointStorage() {}
 
     /// All the operations are performed with indices instead of the points directly,
@@ -31,31 +33,36 @@ public:
         }
     }
 
+    /// Can be overrided in derived classes to have other logic here.
+    /// Now all the cordinates changed in order and depends on the depth of the current tree level.
     virtual size_t findSplittingPanelCoordinateI(
             size_t leftPointsIndicesI,
             size_t rightPointsIndicesI,
             size_t levelI
-            )
+            ) const
     {
         return levelI % K;
     }
 
+    /// Can be overrided in derived classes to have other logic here.
+    /// Find a pivot to split points on nodes in tree. In current implementation,
+    /// this method can change the storage (and it is not const),
+    /// but only within provided left and right indices. It was done for the performance.
+    /// If part of the array is copied, this method can be const.
+    ///
+    /// The current implementation finds for the right median.
     virtual T findPivot(
-            size_t leftPointsIndicesI,
-            size_t rightPointsIndicesI,
+            size_t leftPointsI,
+            size_t rightPointsI,
             size_t coordinateI
             )
     {
-        /// find a median, now we just find right median, other algorithms can be used to have
-        /// better ballanced tree, or find median faster. E.g median of some random
-        /// points can be used
-
-        size_t middlePointsIndicesI = (rightPointsIndicesI + leftPointsIndicesI) / 2;
+        size_t middlePointsIndicesI = (rightPointsI + leftPointsI) / 2;
 
         std::nth_element(
-                    indices.begin() + leftPointsIndicesI,
+                    indices.begin() + leftPointsI,
                     indices.begin() + middlePointsIndicesI,
-                    indices.begin() + rightPointsIndicesI,
+                    indices.begin() + rightPointsI,
                     [&](size_t i, size_t j) {
                         auto elementI = points[i].at(coordinateI);
                         auto elementJ = points[j].at(coordinateI);
@@ -66,6 +73,7 @@ public:
         return points.at(indices.at(middlePointsIndicesI)).at(coordinateI);
     }
 
+    /// Partition points around pivot by the given coordinate.
     size_t partition(
             size_t leftPointsIndicesI,
             size_t rightPointsIndicesI,
@@ -86,6 +94,7 @@ public:
         return middleI - indices.begin();
     }
 
+    /// Search the closest points in the range
     void findClosestPoint(
             KDPoint<T> const & p,
             T & minSquareDistance,
@@ -108,6 +117,7 @@ public:
         return points.size();
     }
 
+    /// return point reference by the index in the original points array order.
     KDPoint<T> const & getPointByOriginalI(size_t i) const {
         return points.at(i);
     }
@@ -118,7 +128,7 @@ protected:
     std::vector<size_t> indices;
 
 private:
-    /// It is necessary to use boost serialization
+    /// Boost serialization
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {

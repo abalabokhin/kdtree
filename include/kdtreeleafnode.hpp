@@ -6,6 +6,7 @@
 class KDTreeLeafNode : public IKDTreeNode
 {
 public:
+    /// Empty c-tor for serialization
     KDTreeLeafNode() {}
 
     KDTreeLeafNode(size_t aLeftPointsIndecisI, size_t aRightPointsIndecisI)

@@ -22,7 +22,6 @@ public:
         return coordinates.size();
     }
 
-    /// Get the dimention of the point
     bool operator == (KDPoint<T> const & right) const {
         if (coordinates.size() != right.coordinates.size()) {
             throw std::length_error("size of points are not the same");
