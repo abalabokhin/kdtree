@@ -2,6 +2,7 @@
 
 #include <kdpoint.hpp>
 #include <kdtreenode.hpp>
+#include <boost/scoped_ptr.hpp>
 
 /// if node an intermediate one
 template <typename T>
