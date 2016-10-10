@@ -1,6 +1,7 @@
 #pragma once
 
-#include<kdtreenode.hpp>
+#include <kdpoint.hpp>
+#include <kdtreenode.hpp>
 
 /// if node an intermediate one
 template <typename T>

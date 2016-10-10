@@ -1,6 +1,8 @@
 #pragma once
 
-#include <kdpoint.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/access.hpp>
+
 #include <memory>
 
 /// Interface for KDTReeNode. It has two children right now: leaf node and intermediate node.
@@ -10,6 +12,7 @@ public:
     virtual ~IKDTreeNode() {}
 
 private:
+    /// Boost serialization
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {

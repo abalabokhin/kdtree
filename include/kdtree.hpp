@@ -140,7 +140,7 @@ private:
         }
     }
 
-    /// It is necessary to use boost serialization
+    /// Boost serialization
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {

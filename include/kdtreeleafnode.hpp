@@ -1,6 +1,8 @@
 #pragma once
 
-#include<kdtreenode.hpp>
+#include <kdtreenode.hpp>
+
+#include <boost/serialization/base_object.hpp>
 
 /// if node is a leaf
 class KDTreeLeafNode : public IKDTreeNode
@@ -17,7 +19,7 @@ public:
     size_t getRightI() { return rightPointsIndecisI; }
 
 private:
-    /// It is necessary to use boost serialization
+    /// Boost serialization
     friend class boost::serialization::access;
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int version) {
