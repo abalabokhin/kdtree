@@ -30,7 +30,7 @@ public:
                           T minSquareDistance)
     {
         T distance = (p.at(planeCoordinateI) - planeCoordinate);
-        if (distance * distance < minSquareDistance) {
+        if (distance * distance < minSquareDistance + std::numeric_limits<T>::epsilon()) {
             nodesToSearch.push_back(leftSubNode.get());
             nodesToSearch.push_back(rightSubNode.get());
         } else {

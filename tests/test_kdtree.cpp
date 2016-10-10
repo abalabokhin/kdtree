@@ -51,13 +51,13 @@ BOOST_AUTO_TEST_CASE( KDTreeTest_randomGeneratedTreesTest )
 {
     /// test for random 100 points for dims for dims 1 to 5
     /// than test 1000 point to search
-    /// it can crash somewhere, if two points are very close to each other or the same,
-    /// but it is a good test that shown the correctness of the tree.
+    /// theoretically it can crash, if two points are very close to each other or the same,
+    /// but I didn't face such a situation with the random generated points.
+    /// It is a good test that shown the correctness of the search, though
 
     /// the tree is also saved and restored
-    /// it is better to have dedicated test and the way to compae trees
-    /// but we don't have the method to compare two trees, so it is a good way to check
-    /// that the restored tree is the correct one
+    /// it is better to have dedicated test and the way to comprae trees
+    /// But now it is a good way to check that the restored tree is the correct one.
 
     std::random_device rd;
     std::mt19937 e2(rd());
