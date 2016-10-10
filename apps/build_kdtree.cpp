@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     }
 
     if (points.empty()) {
-        std::cout << "there are no valiue points in the file: " << csvFilename << std::endl;
+        std::cout << "there are no values for points in the file: " << csvFilename << std::endl;
         return 1;
     }
 
@@ -53,36 +53,6 @@ int main(int argc, char** argv) {
     std::ofstream outfile(treeFilename);
     boost::archive::text_oarchive oa{outfile};
     oa << tree;
-
-//    KDPoint<float> one({0, 0});
-//    KDPoint<float> two({2, 2});
-//    KDPoint<float> three({-1, -1});
-
-//    std::cout << one.squareDistanceToPoint(two);
-
-//    std::vector<KDPoint<float>> points{one, two, three};
-
-//    KDTree<float> tree(points, 2);
-
-//    size_t i = tree.findClosestPoint(KDPoint<float>({-0.6, -0.5}));
-
-//    /// test something
-//    std::stringstream ss;
-//    boost::archive::text_oarchive oa{ss};
-//    auto storage = new KDPointStorage<float>(points, 2);
-//    KDTree<float> tree(storage);
-//    size_t i = 0;
-//    tree.findClosestPoint(KDPoint<float>({1.2, 3.4}), i);
-//    oa << tree;
-
-
-//    KDTree<float> tree1;
-//    boost::archive::text_iarchive ia{ss};
-//    ia >> tree1;
-
-//    ///
-//    int fgh = 78;
-//    ++fgh;
 
     return 0;
 }

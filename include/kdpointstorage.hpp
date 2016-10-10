@@ -22,6 +22,9 @@ public:
     KDPointStorage(std::vector<KDPoint<T>> const & aPoints, size_t aK)
         : K(aK), points(aPoints), indices(points.size())
     {
+        if (K == 0)
+            throw std::domain_error("points dimension should be > 0");
+
         if (points.size() == 0)
             throw std::domain_error("point storage must have at least one point");
 
