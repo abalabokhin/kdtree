@@ -5,6 +5,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <ostream>
 
 template <typename T>
 class KDPoint
@@ -59,4 +60,18 @@ private:
     }
 
     std::vector<T> coordinates;
+
+    /// To use in boost tests
+    template <typename K>
+    friend std::ostream & operator<<(std::ostream& os, const KDPoint<K> & p);
 };
+
+template <typename T>
+std::ostream & operator<<(std::ostream& os, const KDPoint<T> & p) {
+    os << '{';
+    for (auto & c : p.coordinates) {
+        os << c << " ";
+    }
+    os << '}' << std::endl;
+    return os;
+}

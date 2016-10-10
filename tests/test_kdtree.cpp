@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE( KDTreeTest_randomGeneratedTreesTest )
                 totalNaiveTime += diff_naive;
 
                 BOOST_CHECK_EQUAL(bestPointI1, bestPointI2);
-                BOOST_CHECK(closestPoint == points[bestPointI2]);
+                BOOST_CHECK_EQUAL(closestPoint, points[bestPointI2]);
             }
 
             /// Used for simple performance measurement
