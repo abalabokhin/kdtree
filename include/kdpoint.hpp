@@ -27,12 +27,9 @@ public:
         if (coordinates.size() != right.coordinates.size()) {
             throw std::length_error("size of points are not the same");
         }
-        auto epsilon = std::numeric_limits<T>::epsilon();
         for (size_t i = 0; i < coordinates.size(); ++i) {
-            if (coordinates[i] - epsilon > right.coordinates[i]
-                    || coordinates[i] + epsilon < right.coordinates[i]
-               )
-                    return false;
+            if (coordinates[i] != right.coordinates[i])
+                return false;
         }
         return true;
     }
@@ -63,18 +60,4 @@ private:
     }
 
     std::vector<T> coordinates;
-
-    /// To use in boost tests
-    template <typename K>
-    friend std::ostream & operator<<(std::ostream& os, const KDPoint<K> & p);
 };
-
-template <typename T>
-std::ostream & operator<<(std::ostream& os, const KDPoint<T> & p) {
-    os << '{';
-    for (auto & c : p.coordinates) {
-        os << c << " ";
-    }
-    os << '}' << std::endl;
-    return os;
-}
