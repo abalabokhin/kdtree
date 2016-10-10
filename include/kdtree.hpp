@@ -4,10 +4,9 @@
 #include <kdtreeintermediatenode.hpp>
 #include <kdpointstorage.hpp>
 
-#include <boost/serialization/unique_ptr.hpp>
+#include <boost/serialization/scoped_ptr.hpp>
 
 #include <cstddef>
-#include <memory>
 #include <algorithm>
 #include <limits>
 
@@ -149,6 +148,6 @@ private:
 
     size_t depth = 0;
     size_t maxPointsNumberInLeafNode = 1;
-    std::unique_ptr<KDPointStorage<T>> storage;
-    std::unique_ptr<IKDTreeNode> root;
+    boost::scoped_ptr<KDPointStorage<T>> storage;
+    boost::scoped_ptr<IKDTreeNode> root;
 };

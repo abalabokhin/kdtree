@@ -59,8 +59,8 @@ private:
 
     size_t planeCoordinateI = 0;
     T planeCoordinate = 0;
-    std::unique_ptr<IKDTreeNode> leftSubNode;
-    std::unique_ptr<IKDTreeNode> rightSubNode;
+    boost::scoped_ptr<IKDTreeNode> leftSubNode;
+    boost::scoped_ptr<IKDTreeNode> rightSubNode;
 };
 
 /// If you need serialization for KDTreeIntermediateNode<T> make sure that you registered the class
