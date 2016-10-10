@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE( KDTreeTest_randomGeneratedTreesTest )
 
     for (int dims = 1; dims < 5; ++dims) {
         std::vector<KDPoint<float>> points;
-        for (int i = 0; i < 1000; ++i) {
+        for (int i = 0; i < 100; ++i) {
             points.push_back(generateKDRandomPoint(dims, dist, e2));
         }
 
@@ -88,9 +88,9 @@ BOOST_AUTO_TEST_CASE( KDTreeTest_randomGeneratedTreesTest )
             std::chrono::duration<double> totalTreeTime = std::chrono::duration<double>::zero();
             std::chrono::duration<double> totalNaiveTime = std::chrono::duration<double>::zero();
 
-            for (int j = 0; j < 10000; ++j) {
+            for (int j = 0; j < 1000; ++j) {
                 auto p = generateKDRandomPoint(dims, dist, e2);
-                size_t bestPointI1 = 1000;
+                size_t bestPointI1 = 10000;
                 auto start = std::chrono::steady_clock::now();
                 auto closestPoint = restoredTree.findClosestPoint(p, bestPointI1);
                 auto end = std::chrono::steady_clock::now();
