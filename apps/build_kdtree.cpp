@@ -13,8 +13,8 @@ BOOST_CLASS_EXPORT(KDTreeIntermediateNode<double>)
 
 int main(int argc, char** argv) {
     if (argc != 3) {
-        std::cout << "This software exactly accepts two arguments in order: \n"
-                     "1) input CSV file with points to build the kdtree for them\n"
+        std::cout << "This software accepts two arguments exactly. They are: \n"
+                     "1) input CSV file with points to build the k-d tree from them\n"
                      "2) ouput file to save the built tree" << std::endl;
         return 1;
     }

@@ -6,6 +6,7 @@
 #include <boost/archive/text_iarchive.hpp>
 
 #include <random>
+#include <chrono>
 
 BOOST_CLASS_EXPORT(KDTreeIntermediateNode<float>)
 BOOST_CLASS_EXPORT(KDTreeIntermediateNode<double>)
@@ -65,7 +66,7 @@ BOOST_AUTO_TEST_CASE( KDTreeTest_randomGeneratedTreesTest )
 
     for (int dims = 1; dims < 5; ++dims) {
         std::vector<KDPoint<float>> points;
-        for (int i = 0; i < 100; ++i) {
+        for (int i = 0; i < 1000; ++i) {
             points.push_back(generateKDRandomPoint(dims, dist, e2));
         }
 
@@ -84,15 +85,32 @@ BOOST_AUTO_TEST_CASE( KDTreeTest_randomGeneratedTreesTest )
                 ia >> restoredTree;
             }
 
-            for (int j = 0; j < 1000; ++j) {
+            std::chrono::duration<double> totalTreeTime = std::chrono::duration<double>::zero();
+            std::chrono::duration<double> totalNaiveTime = std::chrono::duration<double>::zero();
+
+            for (int j = 0; j < 10000; ++j) {
                 auto p = generateKDRandomPoint(dims, dist, e2);
                 size_t bestPointI1 = 1000;
+                auto start = std::chrono::steady_clock::now();
                 auto closestPoint = restoredTree.findClosestPoint(p, bestPointI1);
+                auto end = std::chrono::steady_clock::now();
+                auto diff_tree = end - start;
+                totalTreeTime += diff_tree;
+
+                start = std::chrono::steady_clock::now();
                 size_t bestPointI2 = findClosestPoint(points, p);
+                end = std::chrono::steady_clock::now();
+                auto diff_naive = end - start;
+                totalNaiveTime += diff_naive;
 
                 BOOST_CHECK_EQUAL(bestPointI1, bestPointI2);
                 BOOST_CHECK(closestPoint == points[bestPointI2]);
             }
+
+            /// Used for simple performance measurement
+//            std::cout << "search in tree duration: "<< totalTreeTime.count() << std::endl;
+//            std::cout << "naive search duration: " << totalNaiveTime.count() << std::endl;
+
         }
     }
 }
