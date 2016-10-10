@@ -27,9 +27,12 @@ public:
         if (coordinates.size() != right.coordinates.size()) {
             throw std::length_error("size of points are not the same");
         }
+        auto epsilon = std::numeric_limits<T>::epsilon();
         for (size_t i = 0; i < coordinates.size(); ++i) {
-            if (coordinates[i] != right.coordinates[i])
-                return false;
+            if (coordinates[i] - epsilon > right.coordinates[i]
+                    || coordinates[i] + epsilon < right.coordinates[i]
+               )
+                    return false;
         }
         return true;
     }
