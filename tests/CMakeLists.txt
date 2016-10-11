@@ -24,7 +24,3 @@ target_link_libraries(t_kdtree
 
 # Define a test that uses the executable we just defined
 add_test(NAME test_kdtree COMMAND t_kdtree)
-
-# Define a custom target that will force the build of the
-# tests and will actually run the tests
-#add_custom_target(tests COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS t_kdtree)

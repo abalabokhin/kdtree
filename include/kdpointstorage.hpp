@@ -37,10 +37,11 @@ public:
     }
 
     /// Can be overrided in derived classes to have other logic here.
-    /// Now all the cordinates changed in order and depends on the depth of the current tree level.
+    /// Now all the cordinates to for splitting plane is changed in order and depends
+    /// only on the depth of the current tree level.
     virtual size_t findSplittingPanelCoordinateI(
-            size_t leftPointsIndicesI,
-            size_t rightPointsIndicesI,
+            size_t leftPointsI,
+            size_t rightPointsI,
             size_t levelI
             ) const
     {
@@ -60,11 +61,11 @@ public:
             size_t coordinateI
             )
     {
-        size_t middlePointsIndicesI = (rightPointsI + leftPointsI) / 2;
+        size_t middlePointsI = (rightPointsI + leftPointsI) / 2;
 
         std::nth_element(
                     indices.begin() + leftPointsI,
-                    indices.begin() + middlePointsIndicesI,
+                    indices.begin() + middlePointsI,
                     indices.begin() + rightPointsI,
                     [&](size_t i, size_t j) {
                         auto elementI = points[i].at(coordinateI);
@@ -73,19 +74,19 @@ public:
                     }
         );
 
-        return points.at(indices.at(middlePointsIndicesI)).at(coordinateI);
+        return points.at(indices.at(middlePointsI)).at(coordinateI);
     }
 
     /// Partition points around pivot by the given coordinate.
     size_t partition(
-            size_t leftPointsIndicesI,
-            size_t rightPointsIndicesI,
+            size_t leftPointsI,
+            size_t rightPointsI,
             size_t coordinateI,
             T pivot
             )
     {
-        auto middleI = std::partition(indices.begin() + leftPointsIndicesI,
-                                      indices.begin() + rightPointsIndicesI,
+        auto middleI = std::partition(indices.begin() + leftPointsI,
+                                      indices.begin() + rightPointsI,
                                       [&](size_t i)
         {
             auto elementI = points[i].at(coordinateI);
@@ -102,11 +103,11 @@ public:
             KDPoint<T> const & p,
             T & minSquareDistance,
             size_t & originalPointI,
-            size_t leftI,
-            size_t rightI
+            size_t leftPointsI,
+            size_t rightPointsI
         ) const
     {
-        for (size_t i = leftI; i < rightI; ++i) {
+        for (size_t i = leftPointsI; i < rightPointsI; ++i) {
             auto squareDistanceCandidate = points.at(indices[i]).squareDistanceToPoint(p);
             if (squareDistanceCandidate < minSquareDistance) {
                 minSquareDistance = squareDistanceCandidate;

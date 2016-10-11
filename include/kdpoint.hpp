@@ -7,6 +7,7 @@
 #include <vector>
 #include <ostream>
 
+/// K-dimentional point
 template <typename T>
 class KDPoint
 {
@@ -18,7 +19,7 @@ public:
         : coordinates(aCoordinates)
     {}
 
-    /// Get the dimention of the point
+    /// Get K the point
     size_t size() const {
         return coordinates.size();
     }

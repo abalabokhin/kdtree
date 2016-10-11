@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <limits>
 
+/// K-dimetional tree
 template <typename T>
 class KDTree {
 public:
@@ -90,51 +91,52 @@ private:
     }
 
     /// build one node of the tree
-    IKDTreeNode * buildTree(size_t leftPointsIndicesI, size_t rightPointsIndicesI, size_t levelI)
+    IKDTreeNode * buildTree(size_t leftPointsI, size_t rightPointsI, size_t levelI)
     {
         depth = std::max(depth, levelI + 1);
         /// it is impossible situation, if everything is right
-        if (rightPointsIndicesI <= leftPointsIndicesI) {
+        if (rightPointsI <= leftPointsI) {
             throw std::length_error("left index must always be bigger than the right one");
         }
-        /// time to create a leaf node, we have to few points to split
-        if (rightPointsIndicesI - leftPointsIndicesI <= maxPointsNumberInLeafNode) {
+        /// time to create a leaf node, we have too few points to split
+        if (rightPointsI - leftPointsI <= maxPointsNumberInLeafNode) {
             /// create a leaf node here
-            return new KDTreeLeafNode(leftPointsIndicesI, rightPointsIndicesI);
+            return new KDTreeLeafNode(leftPointsI, rightPointsI);
         } else {
             /// create an intermediate node here
             /// find a coordinateI to build a splitting plane
             size_t splitingPlaneCoordinateI = storage->findSplittingPanelCoordinateI(
-                        leftPointsIndicesI,
-                        rightPointsIndicesI,
+                        leftPointsI,
+                        rightPointsI,
                         levelI
                         );
 
             /// find a pivot to create two subtrees
             auto pivot = storage->findPivot(
-                        leftPointsIndicesI,
-                        rightPointsIndicesI,
+                        leftPointsI,
+                        rightPointsI,
                         splitingPlaneCoordinateI
                         );
 
-            /// partition points around the pivot and get the index of
-            auto middlePointsIndicesI = storage->partition(
-                        leftPointsIndicesI,
-                        rightPointsIndicesI,
+            /// partition points around the pivot and get the index of the middle point
+            auto middlePointsI = storage->partition(
+                        leftPointsI,
+                        rightPointsI,
                         splitingPlaneCoordinateI,
                         pivot);
 
-            /// It should no be empty nodes. Thus, if a middle index not in between the left and
+            /// It should be no empty nodes. Thus, if a middle index not in between the left and
             /// the rigth one, leaf node is created.
-            if (middlePointsIndicesI <= leftPointsIndicesI ||
-                    middlePointsIndicesI >= rightPointsIndicesI) {
-                return new KDTreeLeafNode(leftPointsIndicesI, rightPointsIndicesI);
+            /// It can happen if we have identical points per the given coordinateI, for instance
+            if (middlePointsI <= leftPointsI ||
+                    middlePointsI >= rightPointsI) {
+                return new KDTreeLeafNode(leftPointsI, rightPointsI);
             }
 
             /// build left and right subtrees
             auto * node = new KDTreeIntermediateNode<T>(splitingPlaneCoordinateI, pivot);
-            node->setLeftSubNode(buildTree(leftPointsIndicesI, middlePointsIndicesI, levelI + 1));
-            node->setRightSubNode(buildTree(middlePointsIndicesI, rightPointsIndicesI, levelI + 1));
+            node->setLeftSubNode(buildTree(leftPointsI, middlePointsI, levelI + 1));
+            node->setRightSubNode(buildTree(middlePointsI, rightPointsI, levelI + 1));
             return node;
         }
     }

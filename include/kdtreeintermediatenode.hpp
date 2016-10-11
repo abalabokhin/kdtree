@@ -4,7 +4,7 @@
 #include <kdtreenode.hpp>
 #include <boost/scoped_ptr.hpp>
 
-/// if node an intermediate one
+/// Intermediate node of kd-tree that stores splitting plane info and left and right subtrees
 template <typename T>
 class KDTreeIntermediateNode : public IKDTreeNode
 {
