@@ -105,7 +105,7 @@ private:
         } else {
             /// create an intermediate node here
             /// find a coordinateI to build a splitting plane
-            size_t splitingPlaneCoordinateI = storage->findSplittingPanelCoordinateI(
+            size_t splitingPlaneCoordinateI = storage->findSplittingPlaneCoordinateI(
                         leftPointsI,
                         rightPointsI,
                         levelI

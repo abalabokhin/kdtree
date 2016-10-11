@@ -4,7 +4,7 @@
 
 #include <exception>
 
-/// In this class we inclapsulate the point storage. All the manipulation with points are performed
+/// This class encapsulates the point storage. All the manipulation with points are performed
 /// here, like partition, selecting pivot, selecting coordinate to split, etc.
 /// findPivot and findSplittingPanelCoordinateI can be overrided to use other algorithms to
 /// perform these operations.
@@ -39,7 +39,7 @@ public:
     /// Can be overrided in derived classes to have other logic here.
     /// Now all the cordinates to for splitting plane is changed in order and depends
     /// only on the depth of the current tree level.
-    virtual size_t findSplittingPanelCoordinateI(
+    virtual size_t findSplittingPlaneCoordinateI(
             size_t leftPointsI,
             size_t rightPointsI,
             size_t levelI
